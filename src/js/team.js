@@ -1,19 +1,43 @@
 export default class Team {
-  constructor(characters) {
-    this.characters = characters;
+  constructor() {
+    this.members = new Set();
+  }
+
+  add(newMember) {
+    if (this.members.has(newMember)) {
+      throw new Error(`${newMember.name} is already in the team`);
+    } else {
+      this.members.add(newMember);
+    }
+  }
+
+  addAll(...newMembers) {
+    newMembers.forEach((newMember) => this.members.add(newMember));
+  }
+
+  toArray() {
+    return Array.from(this.members);
   }
 
   [Symbol.iterator]() {
-    this.current = 0;
-    this.last = this.characters.length;
+    const chars = this.toArray();
+
+    let current = 0;
+    const last = chars.length;
 
     return {
-      next: () => {
-        if (this.current < this.last) {
-          this.current += 1;
-          return { value: this.characters[this.current], done: false };
+      next() {
+        if (current < last) {
+          const currentValue = chars[current];
+          current += 1;
+          return {
+            value: currentValue,
+            done: false,
+          };
         }
-        return { done: true };
+        return {
+          done: true,
+        };
       },
     };
   }
